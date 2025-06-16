@@ -1,8 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Todo } from "./types";
-import { getTodos, createTodo, deleteTodo } from "./api";
+
+interface Todo {
+  id: number;
+  text: string;
+  created_at: string;
+}
+
+declare global {
+  interface Window {
+    electronAPI: {
+      getTodos: () => Promise<{ error: boolean; data: Todo[] }>;
+      createTodo: (text: string) => Promise<{ error: boolean; data: Todo }>;
+      deleteTodo: (id: number) => Promise<{ error: boolean; data: null }>;
+    };
+  }
+}
 
 export default function TodoPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -17,8 +31,11 @@ export default function TodoPage() {
   const fetchTodos = async () => {
     try {
       setIsLoading(true);
-      const data = await getTodos();
-      setTodos(data);
+      const response = await window.electronAPI.getTodos();
+      if (response.error) {
+        throw new Error("Failed to fetch todos");
+      }
+      setTodos(response.data);
       setError(null);
     } catch (err) {
       console.error(err);
@@ -34,8 +51,11 @@ export default function TodoPage() {
 
     try {
       setIsLoading(true);
-      const createdTodo = await createTodo({ text: newTodo });
-      setTodos([createdTodo, ...todos]);
+      const response = await window.electronAPI.createTodo(newTodo);
+      if (response.error) {
+        throw new Error("Failed to create todo");
+      }
+      setTodos([response.data, ...todos]);
       setNewTodo("");
       setError(null);
     } catch (err) {
@@ -49,7 +69,10 @@ export default function TodoPage() {
   const handleDelete = async (id: number) => {
     try {
       setIsLoading(true);
-      await deleteTodo(id);
+      const response = await window.electronAPI.deleteTodo(id);
+      if (response.error) {
+        throw new Error("Failed to delete todo");
+      }
       setTodos(todos.filter((todo) => todo.id !== id));
       setError(null);
     } catch (err) {

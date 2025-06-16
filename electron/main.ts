@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { getPort } from "get-port-please";
 import { startServer } from "next/dist/server/lib/start-server";
 import { join } from "path";
+import { todoModel } from "./db/todoModel";
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -57,10 +58,40 @@ const startNextJSServer = async () => {
   }
 };
 
+// IPC 핸들러 설정
+ipcMain.handle("get-todos", async () => {
+  try {
+    const todos = todoModel.getAll();
+    return { error: false, data: todos };
+  } catch (error) {
+    console.error("Error fetching todos:", error);
+    return { error: true, data: [] };
+  }
+});
+
+ipcMain.handle("create-todo", async (_, text: string) => {
+  try {
+    const todo = todoModel.create(text);
+    return { error: false, data: todo };
+  } catch (error) {
+    console.error("Error creating todo:", error);
+    return { error: true, data: null };
+  }
+});
+
+ipcMain.handle("delete-todo", async (_, id: number) => {
+  try {
+    todoModel.delete(id);
+    return { error: false, data: null };
+  } catch (error) {
+    console.error("Error deleting todo:", error);
+    return { error: true, data: null };
+  }
+});
+
 app.whenReady().then(() => {
   createWindow();
 
-  ipcMain.on("ping", () => console.log("pong"));
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

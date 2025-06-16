@@ -9,3 +9,10 @@ contextBridge.exposeInMainWorld("electron", {
     ) => ipcRenderer.on(channel, listener),
   },
 });
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  // Todo 관련 API
+  getTodos: () => ipcRenderer.invoke("get-todos"),
+  createTodo: (text: string) => ipcRenderer.invoke("create-todo", text),
+  deleteTodo: (id: number) => ipcRenderer.invoke("delete-todo", id),
+});

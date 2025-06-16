@@ -55,8 +55,8 @@
     "electron:dist": "electron-builder --dir",
     "electron:dist:deb": "electron-builder --linux deb",
     "electron:build": "tsup",
-    "build": "run-s next:build electron:build",
-    "dist": "run-s next:build electron:dist",
+    "build": "next build && tsup",
+    "dist": "npm run build && electron-builder",
     "dev": "npm-run-all --parallel electron:dev next:dev",
     "electron:build_watch": "tsup --watch",
     "electron:dev": "npm-run-all --parallel electron:build_watch electron:watch",
@@ -70,6 +70,7 @@
     "better-sqlite3": "^11.10.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "get-port-please": "^3.1.2",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
