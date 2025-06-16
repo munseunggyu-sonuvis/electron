@@ -60,22 +60,35 @@
     "dev": "npm-run-all --parallel electron:dev next:dev",
     "electron:build_watch": "tsup --watch",
     "electron:dev": "npm-run-all --parallel electron:build_watch electron:watch",
-    "electron:watch": "cross-env NODE_ENV='development' nodemon"
+    "electron:watch": "cross-env NODE_ENV='development' nodemon",
+    "server:dev": "ts-node server/src/server.ts",
+    "server:build": "tsc -p server/tsconfig.json",
+    "server:start": "node server/dist/server.js"
   },
   "dependencies": {
+    "@electron-toolkit/utils": "^4.0.0",
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "next": "15.3.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.3"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }
